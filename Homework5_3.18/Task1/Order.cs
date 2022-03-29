@@ -6,33 +6,49 @@ using System.Threading.Tasks;
 
 namespace Task1
 {
-    internal class Order
+    [Serializable]
+    public class Order
     {
-        public static int count = 1;                        //指示订单唯一Id
-        public int Id { get;}                               //订单号
-        public DateTime Time { get; set; }                  //下单时间
-        public List<OrderDetails> Details = new List<OrderDetails>();   //明细列表
-        public Customer OrderCustomer { get; set; }         //顾客信息
-        public double TotalCost { get                       //账单总花费
+        private static int counter = 1;                                    //指示订单唯一Id
+        public int Id { get; set; }                                           //订单号
+        public Customer OrderCustomer { get; set; }                     //顾客信息
+        public DateTime Time { get; set; }                              //下单时间
+        public List<OrderDetails> Details { get; set; } = new List<OrderDetails>();   //明细列表
+        public double TotalCost { 
+            get => Details.Sum(d => d.TotalPrice);
+            /*get                                   //账单总花费
             {
                 double totalCost = 0;
                 foreach (OrderDetails detail in Details)
                     totalCost += detail.TotalPrice;
                 return totalCost;
-            }}
-        public Order(DateTime d, Customer c)
+            }*/}
+        public Order() { }
+        public Order(Customer customer)
         {
-            Id = count++;
-            Time = d;
-            OrderCustomer = c;
+            Id = counter++;
+            Time = DateTime.Now;
+            if (customer == null)
+                throw new ArgumentNullException("添加订单异常，顾客名不能为空");
+            OrderCustomer = customer;
         }
         public void AddDetails(OrderDetails details)    //添加账单明细
         {
+            if (Details.Contains(details))
+                throw new ApplicationException("此订单明细已存在，添加失败");
             Details.Add(details);           
         }
         public void DeleteDetails(OrderDetails details) //删除账单明细
         {
+            if (!Details.Contains(details))
+                throw new ApplicationException("此订单明细不存在，删除失败");
             Details.Remove(details);
+        }
+        public void ModifyDetails(List<OrderDetails> detailList)
+        {
+            if (detailList == null)
+                throw new ApplicationException("为订单修改明细失败，调用参数为NULL");
+            Details = detailList;
         }
         public override string ToString()
         {
@@ -50,6 +66,10 @@ namespace Task1
         {
             return obj is Order order&&
                 Id == order.Id;
+        }
+        public static void ResetCounter()
+        {
+            counter = 1;
         }
     }
 }

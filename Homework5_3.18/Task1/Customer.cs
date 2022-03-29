@@ -5,11 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 namespace Task1
 {
-    internal class Customer
+    public class Customer
     {
-        public static int counter = 1;       //指示顾客唯一Id
-        public int Id { get; }
+        private static int counter = 1;       //指示顾客唯一Id
+        public int Id { get; set; }
         public string Name { get; set; }
+        public Customer() { }
         public Customer(string name)
         {
             Id = counter++;
@@ -17,7 +18,20 @@ namespace Task1
         }
         public override string ToString()
         {
-            return "客户名称: " + Name; 
+            return "客户名称: " + Name + " 客户ID: " + Id; 
+        }
+        public override bool Equals(object? obj)
+        {
+            return obj is Customer customer && 
+                Id == customer.Id;
+        }
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id);
+        }
+        public static void ResetCounter()
+        {
+            counter = 1;
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Xml;
+using System.Xml.Serialization;
 namespace Task1
 {
     public class Program
@@ -17,7 +19,7 @@ namespace Task1
             //在orderservice添加订单
             for(int i = 0; i < customerList.Length; i++)
             {
-                Order o = new(DateTime.Now.AddDays(i), customerList[i]);
+                Order o = new(customerList[i]);
                 for (int j = 0; j < 3; j++)
                 {
                     bool flag = true;               //flag为false，则有相同的账单明细
@@ -32,16 +34,14 @@ namespace Task1
                 }
                 orderservice.AddOrder(o);
             }
+            Console.WriteLine(File.ReadAllText("s.xml"));
             Console.WriteLine("添加订单");
             Console.WriteLine(orderservice.ToString());
 
-            //在orderservice修改订单,这里修改第一条订单的第一个订单明细里的货物和数量
-            List<OrderDetails> tempList = orderservice.OrderList[0].Details;
-            if(tempList != null)
-            {
-                tempList[0].OrderCargo = cargoList[0];
-                tempList[0].Num = 100;
-            }
+            //在orderservice修改订单,这里修改第一条订单的下单时间和顾客姓名
+            DateTime newTime = DateTime.Now.AddYears(1);
+            Customer newCustomer = new("Kevin");
+            orderservice.ModifyOrder(1, newTime, newCustomer);
             Console.WriteLine("修改订单");
             Console.WriteLine(orderservice.ToString());
 

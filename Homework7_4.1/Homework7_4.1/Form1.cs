@@ -29,14 +29,20 @@ namespace Homework7_4._1
 
 		private void Panel1_Paint(object sender, PaintEventArgs e)
 		{
-			graphics = e.Graphics;
-			n = int.Parse(textBox_recusionLength.Text);
-			length = double.Parse(textBox_Length.Text);
-			per1 = double.Parse(textBox_per1.Text);
-			per2 = double.Parse(textBox_per2.Text);
-			th1 = double.Parse(textBox_th1.Text) * Math.PI / 180;
-			th2 = double.Parse(textBox_th2.Text) * Math.PI / 180;
-			drawCayleyTree(n, panel1.Width / 2, panel1.Height, length, -Math.PI / 2);
+			try
+            {
+				graphics = e.Graphics;
+				n = int.Parse(textBox_recusionLength.Text);
+				length = double.Parse(textBox_Length.Text);
+				per1 = double.Parse(textBox_per1.Text);
+				per2 = double.Parse(textBox_per2.Text);
+				th1 = double.Parse(textBox_th1.Text) * Math.PI / 180;
+				th2 = double.Parse(textBox_th2.Text) * Math.PI / 180;
+				drawCayleyTree(n, panel1.Width / 2, panel1.Height, length, -Math.PI / 2);
+			}
+			catch (Exception ex)
+			{ MessageBox.Show(ex.Message); }
+
 		}
 
 

@@ -84,7 +84,7 @@ namespace Homework8_4._8
         {
             Order order = bindingSource_order.Current as Order;
             bindingSource_order.RemoveCurrent();
-            if (order != null)
+            if (order != null) 
             myService.DeleteOrder(order.Id);
         }
     }

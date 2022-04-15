@@ -41,6 +41,10 @@
             this.btn_exp = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.idDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.orderCustomerDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.timeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.totalCostDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.bindingSource_order = new System.Windows.Forms.BindingSource(this.components);
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.idDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -48,10 +52,6 @@
             this.numDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.totalPriceDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.bindingSource_details = new System.Windows.Forms.BindingSource(this.components);
-            this.idDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.orderCustomerDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.timeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.totalCostDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.flowLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -134,6 +134,7 @@
             this.btn_add.TabIndex = 0;
             this.btn_add.Text = "增加订单";
             this.btn_add.UseVisualStyleBackColor = true;
+            this.btn_add.Click += new System.EventHandler(this.btn_add_Click);
             // 
             // btn_del
             // 
@@ -155,6 +156,7 @@
             this.btn_upd.TabIndex = 2;
             this.btn_upd.Text = "修改订单";
             this.btn_upd.UseVisualStyleBackColor = true;
+            this.btn_upd.Click += new System.EventHandler(this.btn_upd_Click);
             // 
             // btn_imp
             // 
@@ -165,6 +167,7 @@
             this.btn_imp.TabIndex = 3;
             this.btn_imp.Text = "导入订单";
             this.btn_imp.UseVisualStyleBackColor = true;
+            this.btn_imp.Visible = false;
             // 
             // btn_exp
             // 
@@ -175,6 +178,7 @@
             this.btn_exp.TabIndex = 4;
             this.btn_exp.Text = "导出订单";
             this.btn_exp.UseVisualStyleBackColor = true;
+            this.btn_exp.Visible = false;
             // 
             // tableLayoutPanel1
             // 
@@ -210,10 +214,43 @@
             this.dataGridView1.Size = new System.Drawing.Size(494, 491);
             this.dataGridView1.TabIndex = 0;
             // 
+            // idDataGridViewTextBoxColumn
+            // 
+            this.idDataGridViewTextBoxColumn.DataPropertyName = "Id";
+            this.idDataGridViewTextBoxColumn.HeaderText = "Id";
+            this.idDataGridViewTextBoxColumn.MinimumWidth = 8;
+            this.idDataGridViewTextBoxColumn.Name = "idDataGridViewTextBoxColumn";
+            this.idDataGridViewTextBoxColumn.Width = 150;
+            // 
+            // orderCustomerDataGridViewTextBoxColumn
+            // 
+            this.orderCustomerDataGridViewTextBoxColumn.DataPropertyName = "OrderCustomer";
+            this.orderCustomerDataGridViewTextBoxColumn.HeaderText = "OrderCustomer";
+            this.orderCustomerDataGridViewTextBoxColumn.MinimumWidth = 8;
+            this.orderCustomerDataGridViewTextBoxColumn.Name = "orderCustomerDataGridViewTextBoxColumn";
+            this.orderCustomerDataGridViewTextBoxColumn.Width = 150;
+            // 
+            // timeDataGridViewTextBoxColumn
+            // 
+            this.timeDataGridViewTextBoxColumn.DataPropertyName = "Time";
+            this.timeDataGridViewTextBoxColumn.HeaderText = "Time";
+            this.timeDataGridViewTextBoxColumn.MinimumWidth = 8;
+            this.timeDataGridViewTextBoxColumn.Name = "timeDataGridViewTextBoxColumn";
+            this.timeDataGridViewTextBoxColumn.Width = 150;
+            // 
+            // totalCostDataGridViewTextBoxColumn
+            // 
+            this.totalCostDataGridViewTextBoxColumn.DataPropertyName = "TotalCost";
+            this.totalCostDataGridViewTextBoxColumn.HeaderText = "TotalCost";
+            this.totalCostDataGridViewTextBoxColumn.MinimumWidth = 8;
+            this.totalCostDataGridViewTextBoxColumn.Name = "totalCostDataGridViewTextBoxColumn";
+            this.totalCostDataGridViewTextBoxColumn.ReadOnly = true;
+            this.totalCostDataGridViewTextBoxColumn.Width = 150;
+            // 
             // bindingSource_order
             // 
-            this.bindingSource_order.DataMember = "DisplayOrders";
-            this.bindingSource_order.DataSource = typeof(Homework8_4._8.Form1);
+            this.bindingSource_order.DataMember = "OrderList";
+            this.bindingSource_order.DataSource = typeof(Task1.OrderService);
             this.bindingSource_order.CurrentChanged += new System.EventHandler(this.bindingSource_order_CurrentChanged);
             // 
             // dataGridView2
@@ -271,39 +308,6 @@
             // 
             this.bindingSource_details.DataMember = "Details";
             this.bindingSource_details.DataSource = typeof(Task1.Order);
-            // 
-            // idDataGridViewTextBoxColumn
-            // 
-            this.idDataGridViewTextBoxColumn.DataPropertyName = "Id";
-            this.idDataGridViewTextBoxColumn.HeaderText = "Id";
-            this.idDataGridViewTextBoxColumn.MinimumWidth = 8;
-            this.idDataGridViewTextBoxColumn.Name = "idDataGridViewTextBoxColumn";
-            this.idDataGridViewTextBoxColumn.Width = 150;
-            // 
-            // orderCustomerDataGridViewTextBoxColumn
-            // 
-            this.orderCustomerDataGridViewTextBoxColumn.DataPropertyName = "OrderCustomer";
-            this.orderCustomerDataGridViewTextBoxColumn.HeaderText = "OrderCustomer";
-            this.orderCustomerDataGridViewTextBoxColumn.MinimumWidth = 8;
-            this.orderCustomerDataGridViewTextBoxColumn.Name = "orderCustomerDataGridViewTextBoxColumn";
-            this.orderCustomerDataGridViewTextBoxColumn.Width = 150;
-            // 
-            // timeDataGridViewTextBoxColumn
-            // 
-            this.timeDataGridViewTextBoxColumn.DataPropertyName = "Time";
-            this.timeDataGridViewTextBoxColumn.HeaderText = "Time";
-            this.timeDataGridViewTextBoxColumn.MinimumWidth = 8;
-            this.timeDataGridViewTextBoxColumn.Name = "timeDataGridViewTextBoxColumn";
-            this.timeDataGridViewTextBoxColumn.Width = 150;
-            // 
-            // totalCostDataGridViewTextBoxColumn
-            // 
-            this.totalCostDataGridViewTextBoxColumn.DataPropertyName = "TotalCost";
-            this.totalCostDataGridViewTextBoxColumn.HeaderText = "TotalCost";
-            this.totalCostDataGridViewTextBoxColumn.MinimumWidth = 8;
-            this.totalCostDataGridViewTextBoxColumn.Name = "totalCostDataGridViewTextBoxColumn";
-            this.totalCostDataGridViewTextBoxColumn.ReadOnly = true;
-            this.totalCostDataGridViewTextBoxColumn.Width = 150;
             // 
             // Form1
             // 

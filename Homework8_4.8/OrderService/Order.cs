@@ -24,7 +24,11 @@ namespace Task1
                     totalCost += detail.TotalPrice;
                 return totalCost;
             }*/}
-        public Order() { }
+        public Order()
+        {
+            Id = counter++;
+            Time = DateTime.Now;
+        }
         public Order(Customer customer)
         {
             Id = counter++;

@@ -11,6 +11,8 @@ namespace Task1
     public class OrderService
     {
         public List<Order> OrderList { get; set; } = new List<Order>();       //订单服务类里的订单列表,测试时为public属性
+        public List<Customer> CustomerList { get; set; } = new List<Customer>();
+        public List<Cargo> CargoList { get; set; } = new List<Cargo>();
         public void AddOrder(Order order)                       //添加订单，参数为Order类型对象
         {
             if (order == null)
@@ -18,6 +20,17 @@ namespace Task1
             if (OrderList.Contains(order))
                 throw new ArgumentException("添加订单失败，此订单已存在");
             OrderList.Add(order);
+            if (!CustomerList.Contains(order.OrderCustomer))
+            {
+                CustomerList.Add(order.OrderCustomer);
+            }
+            foreach (OrderDetails orderDetail in order.Details)
+            { 
+                if (!CargoList.Contains(orderDetail.OrderCargo))
+                {
+                    CargoList.Add(orderDetail.OrderCargo);
+                }
+            }
         }
         public void DeleteOrder(int id)                         //删除id号订单
         {

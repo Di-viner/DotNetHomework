@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,9 +15,13 @@ namespace Homework9_4._15
     class SimpleCrawler
     {
         private Hashtable urls = new Hashtable();
-        private string startUrl;
         private int count;
-        public Action<string, string> GetInfo;
+        //将哈希表换成字典形式
+        private ConcurrentDictionary<string, bool> DownloadPages { get; set; } = new ConcurrentDictionary<string, bool>();
+        private ConcurrentQueue<string> DownloadQueue { get; set; } = new ConcurrentQueue<string>();
+        private string startUrl;                    //开始爬取的网站
+        public Action<string, string> GetInfo;      //定义获取消息的事件
+        
         public SimpleCrawler(string startUrl)
         {
             this.startUrl = startUrl;
@@ -24,20 +29,23 @@ namespace Homework9_4._15
             this.urls.Add(startUrl, false);
             this.count = 0;
         }
-        /*************
-        static void Main(string[] args)
+        public async Task CrawlAsync()
         {
-            SimpleCrawler myCrawler = new SimpleCrawler();
-            startUrl = "http://www.cnblogs.com/dstang2000/";
-            if (args.Length >= 1) startUrl = args[0];
-            myCrawler.urls.Add(startUrl, false);//加入初始页面
-            new Thread(myCrawler.Crawl).Start();
+            DownloadQueue.Enqueue(startUrl);
+            while (DownloadPages.Count <= 10 && DownloadQueue.Count > 0) //爬取网页个数小于10，且存在可爬取网页
+            {
+                string url;
+                DownloadQueue.TryDequeue(out url);
+                string html = await DownloadAsync(url);
+                DownloadPages[url] = true;
+                GetInfo(url, "网页爬取成功");
+                Parse(html,url);
+            }
         }
-        ****************/
+        /****这个Crawl方法没有使用并行*****
         public void Crawl()
         {
-            //Console.WriteLine("开始爬行了.... ");
-            while (true)
+            while (DownloadPages.Count <= 10)
             {
                 string current = null;
                 string html = null;
@@ -48,7 +56,6 @@ namespace Homework9_4._15
                 }
 
                 if (current == null || count > 10) break;
-                //Console.WriteLine("爬行" + current + "页面!");
                 try
                 {
                     html = DownLoad(current); // 下载
@@ -60,12 +67,12 @@ namespace Homework9_4._15
                 urls[current] = true;
                 count++;
                 GetInfo(current, "网页爬取成功");
-                Parse(html, current);//解析,并加入新的链接
-                //Console.WriteLine("爬行结束");
+                Parse(html, current);               //解析,并加入新的链接
             }
         }
-
-        public string DownLoad(string url)
+        *****************/
+        /***************这个Download方法没有使用并行
+        public string DownLoad(string url)//下载
         {
             try
             {
@@ -78,13 +85,29 @@ namespace Homework9_4._15
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex.Message);
-                //return "";
                 throw ex;
             }
         }
+        *****************/
+        private async Task<string> DownloadAsync(string url)//可以返回值的异步操作
+        {
+            try
+            {
+                WebClient webClient = new WebClient();
+                webClient.Encoding = Encoding.UTF8;
+                string html = await webClient.DownloadStringTaskAsync(url);//作为资源下载string从URI指定为使用task对象的异步操作
+                string fileName = DownloadPages.Count.ToString();
+                await Task.Factory.StartNew(() => File.WriteAllText(fileName, html, Encoding.UTF8));//创建并启动任务
+                return html;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
 
-        private void Parse(string html, string current)
+        }
+
+        private void Parse(string html, string current)//解析
         {
 
             string strRef = @"(href|HREF)[]*=[]*[""'][^""'#>]+(htm|html|aspx|jsp)[""']";
@@ -93,15 +116,19 @@ namespace Homework9_4._15
             foreach (Match match in matches)
             {
                 strRef = match.Value.Substring(match.Value.IndexOf('=') + 1).Trim('"', '\"', '#', '>');
-                string abUrl = ToAbsUrl(strRef, current);        //构造完整地址
-                if (strRef.Length == 0) continue;
-                if (urls[abUrl] == null && Regex.IsMatch(new Uri(abUrl).Host, HostRegex))   //只爬取指定网站
-                    urls[abUrl] = false;
+                string abUrl = ToAbsUrl(strRef, current);                   //构造绝对路径
+                if (abUrl.Length == 0) continue;
+                if (!DownloadPages.ContainsKey(abUrl) && Regex.IsMatch(new Uri(abUrl).Host, HostRegex))
+                {
+                    DownloadQueue.Enqueue(abUrl);
+                    DownloadPages[abUrl] = false;
+                }
             }
         }
-        private String ToAbsUrl(string strRef, string current)
+
+        private String ToAbsUrl(string strRef, string current)  //相对路径转换为绝对路径
         {
-            Uri currentUri = new Uri(current);    //根据指定的URI和相对URI字符串构造URI实例 
+            Uri currentUri = new Uri(current);                  //根据指定的URI和相对URI字符串构造URI实例
             try
             {
                 Uri result = new Uri(strRef);

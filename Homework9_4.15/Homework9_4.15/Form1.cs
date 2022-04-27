@@ -33,13 +33,23 @@ namespace Homework9_4._15
             simpleCrawler.GetInfo += GetCrawlInfo;
             richTextBox1.Clear();
             richTextBox1.AppendText("开始爬取");
-            simpleCrawler.Crawl();
-            richTextBox1.AppendText("结束爬取");
-            
+            Task task = simpleCrawler.CrawlAsync();
         }
         private void GetCrawlInfo(string url, string info)
         {
-            richTextBox1.AppendText($"URL: {url}\n爬取信息: {info}\n\n");
+            if (this.richTextBox1.InvokeRequired)
+            {
+                Invoke(() => richTextBox1.AppendText($"URL: {url}\n爬取信息: {info}\n\n"),new object[] {url, info});
+            }
+            else
+            {
+                richTextBox1.AppendText($"URL: {url}\n爬取信息: {info}\n\n");
+            }
+        }
+
+        private void Invoke(Action p, object[] vs)
+        {
+            throw new NotImplementedException();
         }
     }
 }

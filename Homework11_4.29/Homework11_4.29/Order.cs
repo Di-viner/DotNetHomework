@@ -13,10 +13,10 @@ namespace Task1
     {
         private static int counter = 1;                                    //指示订单唯一Id
         public int ID { get; set; }                                           //订单号
-        public Customer OrderCustomer { get; set; }                     //顾客信息
-        public DateTime Time { get; set; }                              //下单时间
-        public List<OrderDetails> Details { get; set; } = new List<OrderDetails>();   //明细列表
-        public double TotalCost { 
+        public virtual Customer OrderCustomer { get; set; }                     //顾客信息
+        public virtual DateTime Time { get; set; }                              //下单时间
+        public virtual List<OrderDetails> Details { get; set; }    //明细列表
+        public virtual double TotalCost { 
             get => Details.Sum(d => d.TotalPrice);
             /*get                                   //账单总花费
             {
@@ -28,8 +28,17 @@ namespace Task1
         }
         public Order()
         {
-            ID = counter++;
+            //ID = counter++;
             Time = DateTime.Now;
+            Details = new List<OrderDetails>();
+        }
+        public Order(Customer customer, List<OrderDetails> orderDetails)
+        {
+            Time = DateTime.Now;
+            if (customer == null)
+                throw new ArgumentNullException("添加订单异常，顾客名不能为空");
+            OrderCustomer = customer;
+            Details = orderDetails;
         }
         public Order(Customer customer)
         {
@@ -37,6 +46,7 @@ namespace Task1
             if (customer == null)
                 throw new ArgumentNullException("添加订单异常，顾客名不能为空");
             OrderCustomer = customer;
+            Details = new List<OrderDetails>();
         }
         public void AddDetails(OrderDetails details)    //添加账单明细
         {
@@ -68,7 +78,7 @@ namespace Task1
         }
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder("订单号:" + ID + " 订单时间: " + Time + " 顾客姓名:" + OrderCustomer.Name + " 订单金额: " + TotalCost);
+            StringBuilder sb = new StringBuilder("订单号:" + ID + " 订单时间: " + Time + " 顾客姓名:" + OrderCustomer.Name );
             sb.AppendLine();
             foreach(var detail in Details)
                 sb.AppendLine(detail.ToString());

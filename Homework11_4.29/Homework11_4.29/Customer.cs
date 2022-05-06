@@ -13,7 +13,7 @@ namespace Task1
         public Customer() { }
         public Customer(string name)
         {
-            ID = counter++;
+            //ID = counter++;
             Name = name;
         }
         public override string ToString()

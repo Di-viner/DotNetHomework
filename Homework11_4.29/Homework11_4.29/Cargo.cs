@@ -17,7 +17,7 @@ namespace Task1
         public Cargo() { }
         public Cargo(string name, double p)
         {
-            ID = counter++;
+            //ID = counter++;
             Name = name;
             Price = p;
         }

@@ -23,6 +23,7 @@ namespace Task1
                 throw new ArgumentException("添加订单失败，此订单已存在");
             using (var db = new OrderserviceContext())
             {
+                OrderList.Add(order);
                 db.Orders.Add(order);
                 db.SaveChanges();
             }
@@ -40,8 +41,10 @@ namespace Task1
                 throw new ArgumentException("找不到该订单");
             using (var db = new OrderserviceContext())
             {
+                db.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 0;");
                 db.Orders.Remove(db.Orders.Where(i => i.ID == id).FirstOrDefault());
                 db.SaveChanges();
+                db.Database.ExecuteSqlCommand("SET FOREIGN_KEY_CHECKS = 1;");
             }
         }
         public void UpdateOrder(int id, List<OrderDetails> details)//修改订单
@@ -67,9 +70,10 @@ namespace Task1
             {
                 using (var db = new OrderserviceContext())
                 {
-                    var item = db.Orders.Where(i => i.ID == id).FirstOrDefault();
-                    item.OrderCustomer = customer;
+                    var item = db.Orders.Include("Details").Include("OrderCustomer").Include("Details.OrderCargo").FirstOrDefault(i => i.ID == id);
                     db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+                    item.OrderCustomer = customer;
+                    order.OrderCustomer = customer;
                     db.SaveChanges();
                 }
             }
@@ -82,7 +86,8 @@ namespace Task1
                 throw new ArgumentException("查询订单异常，查询ID应大于0");
             using (var db = new OrderserviceContext())
             {
-                return db.Orders.Where(i => i.ID == id).ToList();
+                //db.Configuration.LazyLoadingEnabled = false;
+                return db.Orders.Include("Details").Include("OrderCustomer").Include("Details.OrderCargo").Where(i => i.ID == id).ToList();
             }
         }      
         
@@ -94,7 +99,7 @@ namespace Task1
             }
             using (var db = new OrderserviceContext())
             {
-                return db.Orders.Where(p).ToList();
+                return db.Orders.Include("Details").Include("OrderCustomer").Include("Details.OrderCargo").Where(p).ToList();
             }
         }
         public List<Order> Find(string cargoName = null, string customerName = null, int totalCost = 0)//按照货物名，顾客姓名，总价钱查找订单

@@ -10,25 +10,25 @@ namespace Task1
     {
         private static int counter = 1;
         public int Id { get; set; }
-        public Cargo OrderCargo { get; set; }   //货物
+        public virtual Cargo OrderCargo { get; set; }   //货物
         public int Num { get; set; }            //货物数量
         public double TotalPrice { get
             { return OrderCargo.Price * Num; } }   //单则明细的货物价钱
         public OrderDetails() { }
         public OrderDetails(Cargo c, int num)
         {
-            Id = counter++;
+            //Id = counter++;
             OrderCargo = c;
             Num = num;
         }
         public override string ToString()
         {
-            return "订单明细    " + OrderCargo + " 货物数量: " + Num + " 货物花费: " + TotalPrice;
+            return "订单明细    " + OrderCargo + " 货物数量: " + Num;
         }
         public override bool Equals(object obj)
         {
             return obj is OrderDetails details &&
-                Id == details.Id;
+                details.GetHashCode() == GetHashCode();
         }
         
         public override int GetHashCode()
